@@ -1,4 +1,8 @@
 import express from 'express';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const users = [
     {
@@ -12,6 +16,7 @@ const users = [
 const app = express(); // => new Express()
 
 // middleware function
+app.use(express.static('public')); // created a get request route for each static asset so that can be requested as relative paths as though puvlic is root
 app.use(express.json()); // JSON.parse(req.bdoy)
 
 app
@@ -19,12 +24,17 @@ app
 .get((req, res) => {
     console.log(req.method);
 
-    res.send('<h1>Hello world!</h1>'); // send method allows server to send any content which should be int. as HTML by the browser
+    res.sendFile(path.join(__dirname, '../public/index.html')); // send method allows server to send any content which should be int. as HTML by the browser
 });
 
-app.route('/contact') // routes that are named without refence data/api are usually HTML
+app.route('/routes') // routes that are named without refence data/api are usually HTML
 .get((req, res) => {
-    res.send("Hello world #2");
+    res.sendFile(path.join(__dirname, '../public/routes.html'));
+});
+
+app.route('/send')
+.get((req, res) => {
+    res.sendFile(path.join(__dirname, '../public/send.html'));
 });
 
 app.get('/api/users', (req, res) => { // api or data or a specific object reference suggest we want to receive JSON as resonse
